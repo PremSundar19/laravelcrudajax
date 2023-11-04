@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/',function(){ return view('welcome');});
 Route::get('/index',[EmployeeController::class,'index']);
-Route::post("/employee-added",[EmployeeController::class,'saveEmployee'])->name('add');
-Route::get('employee',[EmployeeController::class,'fetchEmployee'])->name('fetchData');
+Route::post("/employee-add",[EmployeeController::class,'saveEmployee']);
+Route::get('employee/{id}',[EmployeeController::class,'fetchEmployee']);
+Route::post('employee-update',[EmployeeController::class,'employeeUpdate']);
 

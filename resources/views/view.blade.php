@@ -17,6 +17,7 @@
                 right:-360px;
                 position: relative;
             }
+            
         </style>
 </head>
 <body>
@@ -26,8 +27,6 @@
                 <div class="bg-success">
                     <span id="newEmployeeAddedMessage"></span>
                 </div>
-
-               
             <div class="bg-secondary  p-2  m-2">
                         <h5 class="text-dark text-center">Laravel Ajax CRUD operation</h5>
                     </div>
@@ -54,24 +53,8 @@
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach($employees as $employee)
-                        <tr>
-                            <th scope="row">{{$employee->name}}</th>
-                            <td>{{$employee->email}}</td>
-                            <td>{{$employee->gender}}</td>
-                            <td>{{$employee->dob}}</td>
-                            <td>{{$employee->age}}</td>
-                            <td>{{$employee->salary}}</td>
-                            <td>{{$employee->city}}</td>
-                            <td>
-                                <!-- <button type="button" class="btn btn-xs btn-primary" data-bs-toggle="modal" id="editId" data-id="{{ $employee->id }}" data-bs-target="#editEmployee">Edit</button> -->
-                                    <a href="#editEmployee" class="btn btn-primary"data-bs-toggle="modal" id="editId" data-id="{{ $employee->id }}"
-                                    data-bs-target="#editEmployee">Edit</a>
-                                <button type="button" class="btn btn-xs btn-danger">Delete</button>
-                            </td>
-                        </tr>
-                        @endforeach
+                    <tbody id="employee_data">
+                        
                     </tbody>
                 </table>
             </div>
@@ -137,12 +120,12 @@
     </div>
 
     <!-- Edit Form -->
-    <div class="modal fade" id="editEmployee" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+    <div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Employee Edit Form</h5>
+                    <h5 class="modal-title" id="editEmployeeModal">Employee Edit Form</h5>
                 </div>
                 <div class="modal-body">
                     <form action="" method="post">
@@ -159,12 +142,12 @@
                         <div class="form-group">
                             <label for="editgender" class="form-label">gender</label>
                             <div>
-                                <input type="radio" name="editgender" id="male" >
-                                <label class="form-label" for="male">Male</label>
-                                <input type="radio" name="editgender" id="female">
-                                <label class="form-label"  for="female">Female</label>
-                                <input type="radio" name="editgender" id="others">
-                                <label class="form-label"  for="others">Others</label>
+                                <input type="radio" name="editgender" id="editmale" value="Male">
+                                <label for="editmale" class="form-label">Male</label>
+                                <input type="radio" name="editgender" id="editfemale" value="Female">
+                                <label for="editfemale" class="form-label">Female</label>
+                                <input type="radio" name="editgender" id="editothers" value="Others">
+                                <label for="editothers" class="form-label">Others</label>
                             </div>
                         </div>
                         <div class="form-group">
@@ -187,7 +170,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary btn-xs py-1"
                                 data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary btn-xs py-1">Save changes</button>
+                            <button type="button" class="btn btn-primary btn-xs py-1 update">save</button>
                         </div>
                     </form>
                 </div>
@@ -198,6 +181,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script>
         $(document).ready(() => {
+            displayEmployee();
             $('#dob').on('change',()=>{
                var dob = new Date( $('#dob').val());
                var today = new Date();
@@ -231,7 +215,7 @@ $('#save').click(()=>{
                              $("#save").attr("disabled", "disabled");
                     console.log($('#saveform').serialize());
             $.ajax({
-               url: "{{url('employee-added')}}",
+               url: "{{url('employee-add')}}",
                type:"POST",
                data :{
                   name:name,
@@ -252,30 +236,77 @@ $('#save').click(()=>{
                     alert('please fill all the fields');
                 }
 });
-                
-$('#editId').click(()=>{
-    // var editId = $('#editId').val();
-    var id = $("#editId").data('id');
-    console.log(id);
-    $.ajax({
-        type:'get',
-        data:{
-            id:id,
-        },
-        url:'{{ url('employee') }}',
-        success: function(response) {
-            console.log(response);
-                    console.log(response);
+function displayEmployee(){
+    var employees = <?php echo $employees ?>;
+    var tr = '';
+    for(let i=0;i<employees.length;i++){
+        tr += '<tr>';
+        tr += '<td>'+ employees[i].name +'</td>';
+        tr += '<td>'+ employees[i].email +'</td>';
+        tr += '<td>'+ employees[i].gender +'</td>';
+        tr += '<td>'+ employees[i].dob +'</td>';
+        tr += '<td>'+ employees[i].age +'</td>'
+        tr += '<td>'+ employees[i].salary +'</td>' 
+        tr += '<td>'+ employees[i].city +'</td>'; 
+        tr += '<td><div class="d-flex">';
+        tr += '<a class="btn btn-success" data-bs-target="#editEmployeeModal" data-bs-toggle="modal" onclick=viewEmployee("' + employees[i].id +'")>Edit</a> &nbsp;&nbsp;' ;
+        tr += '<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal" onclick=$("#delete_id").val("'+ employees[i].id +'")>Delete</a>';
+        tr += '</div></td>';
+        tr += '</tr>';
+    }
+    $('#employee_data').append(tr);
+}
+function viewEmployee(id) {
+            $.ajax({
+                type: 'get',
+                url: "{{ url('employee') }}/" + id,
+                success: function(response) {
                     $('#editname').val(response.name);
                     $('#editemail').val(response.email);
-                    $('#editgender').val(response.gender);
+                    genderValue = response.gender;
+                    if(genderValue === "Male"){
+                    $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
+                    }else if(genderValue === "Female"){
+                    $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
+                    }else{
+                    $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
+                    }
                     $('#editdob').val(response.dob);
                     $('#editage').val(response.age);
                     $('#editsalary').val(response.salary);
                     $('#editcity').val(response.city);
                 }
-    });
-});
+            })
+        }
+
+        $('.update').click(()=>{
+            var editname =$('#editname').val();
+            var editemail = $('#editemail').val();
+            var editgender = $('input[name="editgender"]:checked').val();
+            console.log(editgender);
+            var editdob = $('#editdob').val();
+            var editage =$('#editage').val();
+            var editsalary = $('#editsalary').val();
+            var editcity =$('#editcity').val();
+            $.ajax({
+                url:'{{url('employee-update')}}',
+                type:'post',
+                data:{
+                    editname : editname,
+                    editemail : editemail,
+                    editgender : editgender,
+                    editdob : editdob,
+                    editage : editage,
+                    editsalary : editsalary,
+                    editcity : editcity,
+                }, success: function(response) {
+                    $('#editEmployeeModal').hide();
+                    alert('Employee Updated Successfully');
+                    window.location.replace('index');
+                }
+            });
+        });
+
     </script>
 </body>
 </html>

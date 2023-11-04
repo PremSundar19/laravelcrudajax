@@ -23,8 +23,6 @@ public function index(){
                     $employee->salary = $request->salary;
                     $employee->city = $request->city;
                     $saved =  $employee->save();
-                 
-
                     if($saved){
                         $response = [
                             'status'=>'ok',
@@ -43,8 +41,34 @@ public function index(){
     }
 
     public function fetchEmployee($id){
-       $emp = Employee::find($id);
-        return view('view',['emp'=>$emp]);
+       return Employee::find($id);
     }
     
+    public function employeeUpdate(Request $request){
+        $updateData = [
+            'name' => $request->name,
+            'email'=> $request->email,
+            'gender' => $request->gender,
+            'dob' => $request->dob,
+            'age'=> $request->age,
+            'salary' => $request->salary,
+            'city' => $request->city,
+        ];
+        $result = Employee::where('id', $request->employee_id)->update($updateData);
+        if($result){
+            $response = [
+                'status'=>'ok',
+                'success'=>true,
+                'message'=>'Record updated succesfully!'
+            ];
+            return $response;
+        }else{
+            $response = [
+                'status'=>'ok',
+                'success'=>false,
+                'message'=>'Record updated failed!'
+            ];
+            return $response;
+        }
+    }
 }
