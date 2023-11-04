@@ -19,5 +19,5 @@ Route::get('index',function(){return view('view');});
 Route::get('/view',[EmployeeController::class,'index']);
 Route::post("/employee-add",[EmployeeController::class,'saveEmployee']);
 Route::get('employee/{id}',[EmployeeController::class,'fetchEmployee']);
-Route::post('employee-update',[EmployeeController::class,'updateEmployee']);
+Route::post('employeeupdate',[EmployeeController::class,'updateEmployee']);
 Route::get('employe-delete/{id}',[EmployeeController::class,'deleteEmployee']);

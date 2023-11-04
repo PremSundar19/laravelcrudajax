@@ -315,7 +315,7 @@ function viewEmployee(id) {
             var editsalary = $('#editsalary').val();
             var editcity =$('#editcity').val();
             $.ajax({
-                url:"{{url(employee-update)}}",
+                url:'{{url('employeeupdate')}}',
                 type:'post',
                 data:{
                     editid : editid,
