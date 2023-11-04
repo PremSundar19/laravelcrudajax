@@ -12,16 +12,20 @@
         integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
         crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <style>
             #addNewEmployee{
                 right:-360px;
                 position: relative;
             }
-            
         </style>
 </head>
 <body>
     <div class="container mt-2">
+    <div id="message-container">
+
+    </div>
         <div class="card">
             <div class="card-body">
                 <div class="bg-success">
@@ -110,15 +114,13 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary btn-xs py-1"
                                 data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary btn-xs py-1" id="save">Save changes</button>
+                            <button type="button" class="btn btn-primary btn-xs py-1" id="save" onclick="addEmployee();">Save changes</button>
                         </div>
-                
                 </form>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Edit Form -->
     <div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
         aria-hidden="true">
@@ -130,7 +132,7 @@
                 <div class="modal-body">
                     <form action="" method="post">
                     @csrf
-                    
+                            <input type="hidden" name="id" id="id" >
                         <div class="form-group">
                             <label for="editname" class="form-label">Name</label>
                             <input type="text" name="editname" id="editname" class="form-control">
@@ -177,12 +179,60 @@
             </div>
         </div>
     </div>
+    <!-- Delete Modal -->
+    <div id="deleteEmployeeModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Employee</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete these Records?</p>
+                    <p class="text-danger"><small>This action cannot be undone.</small></p>
+                </div>
+                <input type="hidden" id="delete_id">
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default close" data-bs-dismiss="modal" value="Cancel">
+                    <input type="submit" class="btn btn-danger" onclick="deleteEmployee()" value="Delete">
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script>
-        $(document).ready(() => {
-            displayEmployee();
-            $('#dob').on('change',()=>{
+         
+         $(document).ready(function(){
+            employeeList();
+        });
+
+        function employeeList() {
+            $.ajax({
+                type: 'get',
+                url: "{{ url('view') }}",
+                success: function(response) {
+                    var tr = '';
+    for(let i=0;i<response.length;i++){
+        tr += '<tr>';
+        tr += '<td>'+ response[i].name +'</td>';
+        tr += '<td>'+ response[i].email +'</td>';
+        tr += '<td>'+ response[i].gender +'</td>';
+        tr += '<td>'+ response[i].dob +'</td>';
+        tr += '<td>'+ response[i].age +'</td>'
+        tr += '<td>'+ response[i].salary +'</td>' 
+        tr += '<td>'+ response[i].city +'</td>'; 
+        tr += '<td><div class="d-flex">';
+        tr += '<a class="btn btn-success" data-bs-target="#editEmployeeModal" data-bs-toggle="modal" onclick=viewEmployee("' + response[i].id +'")>Edit</a> &nbsp;&nbsp;' ;
+        tr += '<a class="btn btn-danger"  data-bs-target="#deleteEmployeeModal" data-bs-toggle="modal"  onclick=$("#delete_id").val("' +response[i].id+'")>Delete</a>';
+        tr += '</div></td>';
+        tr += '</tr>';
+    }
+    $('#employee_data').append(tr);
+                }
+            });
+        }
+
+                $('#dob').on('change',()=>{
                var dob = new Date( $('#dob').val());
                var today = new Date();
                var age = today.getFullYear() - dob.getFullYear();
@@ -197,22 +247,17 @@
                   $('#age').val(age);
                }
             });
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
-                });
-$('#save').click(()=>{
-                var name = $('#name').val();
-                var email = $('#email').val();
-                var gender = $('input[name="gender"]:checked').val();
-                var dob = $('#dob').val();
-                var age = $('#age').val();
-                var salary = $('#salary').val();
-                var city = $('#city').val();
+
+                function addEmployee(){
+                    var name = $('#name').val();
+                    var email = $('#email').val();
+                    var gender = $('input[name="gender"]:checked').val();
+                    var dob = $('#dob').val();
+                    var age = $('#age').val();
+                    var salary = $('#salary').val();
+                    var city = $('#city').val();
                 if(name !== "" && email !== "" && gender !== "" && dob !== "" && age !== "" && salary !== "" && city !== "" ){
-                             $("#save").attr("disabled", "disabled");
+                    $("#save").attr("disabled", "disabled");
                     console.log($('#saveform').serialize());
             $.ajax({
                url: "{{url('employee-add')}}",
@@ -227,50 +272,31 @@ $('#save').click(()=>{
                   city:city,
                },
                success: function(response) {
-                    $('#addEmployeeModal').hide();
-                    alert('Employee Added Successfully');
-                    window.location.replace('index');
+                    $('#addEmployeeModal').modal('hide');
+                    employeeList();
                 }
-            });
+            })
                 }else{
                     alert('please fill all the fields');
                 }
-});
-function displayEmployee(){
-    var employees = <?php echo $employees ?>;
-    var tr = '';
-    for(let i=0;i<employees.length;i++){
-        tr += '<tr>';
-        tr += '<td>'+ employees[i].name +'</td>';
-        tr += '<td>'+ employees[i].email +'</td>';
-        tr += '<td>'+ employees[i].gender +'</td>';
-        tr += '<td>'+ employees[i].dob +'</td>';
-        tr += '<td>'+ employees[i].age +'</td>'
-        tr += '<td>'+ employees[i].salary +'</td>' 
-        tr += '<td>'+ employees[i].city +'</td>'; 
-        tr += '<td><div class="d-flex">';
-        tr += '<a class="btn btn-success" data-bs-target="#editEmployeeModal" data-bs-toggle="modal" onclick=viewEmployee("' + employees[i].id +'")>Edit</a> &nbsp;&nbsp;' ;
-        tr += '<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal" onclick=$("#delete_id").val("'+ employees[i].id +'")>Delete</a>';
-        tr += '</div></td>';
-        tr += '</tr>';
-    }
-    $('#employee_data').append(tr);
-}
+                }
+
 function viewEmployee(id) {
             $.ajax({
                 type: 'get',
                 url: "{{ url('employee') }}/" + id,
                 success: function(response) {
+                    $('#id').val(response.id);
                     $('#editname').val(response.name);
                     $('#editemail').val(response.email);
                     genderValue = response.gender;
-                    if(genderValue === "Male"){
-                    $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
-                    }else if(genderValue === "Female"){
-                    $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
-                    }else{
-                    $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
-                    }
+                            if(genderValue === "Male"){
+                            $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
+                            }else if(genderValue === "Female"){
+                            $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
+                            }else{
+                            $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
+                            }
                     $('#editdob').val(response.dob);
                     $('#editage').val(response.age);
                     $('#editsalary').val(response.salary);
@@ -278,8 +304,8 @@ function viewEmployee(id) {
                 }
             })
         }
-
         $('.update').click(()=>{
+            var editid = $('#id').val();
             var editname =$('#editname').val();
             var editemail = $('#editemail').val();
             var editgender = $('input[name="editgender"]:checked').val();
@@ -289,9 +315,10 @@ function viewEmployee(id) {
             var editsalary = $('#editsalary').val();
             var editcity =$('#editcity').val();
             $.ajax({
-                url:'{{url('employee-update')}}',
+                url:"{{url(employee-update)}}",
                 type:'post',
                 data:{
+                    editid : editid,
                     editname : editname,
                     editemail : editemail,
                     editgender : editgender,
@@ -299,13 +326,28 @@ function viewEmployee(id) {
                     editage : editage,
                     editsalary : editsalary,
                     editcity : editcity,
-                }, success: function(response) {
-                    $('#editEmployeeModal').hide();
-                    alert('Employee Updated Successfully');
-                    window.location.replace('index');
+                }, success: function(data) {
+                    $('#editEmployeeModal').modal('hide');
+                    if (data.message) {
+                        $('#message-container').html('<div class="alert alert-success">' + data.message + '</div>');
+                    }
+                    employeeList();
                 }
             });
         });
+
+       function deleteEmployee(){
+       var id = $("#delete_id").val();
+       $('#deleteEmployeeModal').modal('hide');
+            console.log(id);
+            $.ajax({
+               url : "{{ url('employee-delete') }}/" + id,
+               type : "get",
+               success:function(response){
+                employeeList();
+               }
+            });
+        }
 
     </script>
 </body>

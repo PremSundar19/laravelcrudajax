@@ -423,9 +423,7 @@
                             id +
                             '")><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>';
                         tr +=
-                            '<a href="#deleteEmployeeModal" class="m-1 delete" data-toggle="modal" onclick=$("#delete_id").val("' +
-                            id +
-                            '")><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>';
+                            '<a href="#deleteEmployeeModal" class="m-1 delete" data-toggle="modal" onclick=$("#delete_id").val("' +id +'")><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>';
                         tr += '</div></td>';
                         tr += '</tr>';
                     }
@@ -625,3 +623,25 @@ Route::post('employee-add',[EmployeesController::class,' employee_add']);
 Route::post('employee-edit',[EmployeesController::class.'employee-edit']);
 Route::get('employee-view',[EmployeesController::class,' employee_view']);
 Route::get('employee-delete',[EmployeesController::class.'employee-delete']);
+
+
+function displayEmployee(){
+    var employees = <?php echo $employees ?>;
+    var tr = '';
+    for(let i=0;i<employees.length;i++){
+        tr += '<tr>';
+        tr += '<td>'+ employees[i].name +'</td>';
+        tr += '<td>'+ employees[i].email +'</td>';
+        tr += '<td>'+ employees[i].gender +'</td>';
+        tr += '<td>'+ employees[i].dob +'</td>';
+        tr += '<td>'+ employees[i].age +'</td>'
+        tr += '<td>'+ employees[i].salary +'</td>' 
+        tr += '<td>'+ employees[i].city +'</td>'; 
+        tr += '<td><div class="d-flex">';
+        tr += '<a class="btn btn-success" data-bs-target="#editEmployeeModal" data-bs-toggle="modal" onclick=viewEmployee("' + employees[i].id +'")>Edit</a> &nbsp;&nbsp;' ;
+        tr += '<a class="btn btn-danger"  data-bs-target="#deleteEmployeeModal" data-bs-toggle="modal"  onclick=$("#delete_id").val("' +employees[i].id+'")>Delete</a>';
+        tr += '</div></td>';
+        tr += '</tr>';
+    }
+    $('#employee_data').append(tr);
+}
