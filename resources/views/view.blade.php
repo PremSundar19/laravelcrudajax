@@ -6,14 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Index</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
-        integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
-        crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
         <style>
             #addNewEmployee{
                 right:-360px;
@@ -73,17 +68,14 @@
                 <div class="modal-body add_epmployee">
                 @csrf
                 <form id="saveform" method="post">
-                <div class="form-group">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" name="name" id="name" class="form-control" oninput="validateName(this);">
+                         <div class="form-group">
+                             <label for="name" class="form-label">Name</label>
+                            <input type="text" name="name" id="name" class="form-control" oninput="validateText(this);">
                             <span id="nameError" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" oninput="validateEmail(this);">
-                            @error('email')
-                             <div class="alert alert-danger">{{ $message }}</div>
-                            @enderror
+                            <input type="email" name="email" id="email"   onblur="duplicateEmail(this);"  class="form-control" oninput="validateEmail(this);">
                             <span id="emailError" class="text-danger"></span>
                             <span id="alreadyExists" class="text-danger"></span>
                         </div>
@@ -100,7 +92,7 @@
                         </div>
                         <div class="form-group">
                             <label for="dob" class="form-label">Date Of Birth</label>
-                            <input type="date" name="dob" id="dob" class="form-control">
+                            <input type="date" name="dob" id="dob" class="form-control" >
                             <span id="dobError" class="text-danger"></span>
                         </div>
                         <div class="form-group">
@@ -114,12 +106,12 @@
                         </div>
                         <div class="form-group">
                             <label for="city" class="form-label">City</label>
-                            <input type="text" name="city" id="city" class="form-control">
+                            <input type="text" name="city" id="city" class="form-control" oninput="validateText(this);">
                             <span id="cityError" class="text-danger"></span>
                         </div>
                         <br>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary btn-xs py-1"
+                            <button type="button" class="btn btn-secondary btn-xs py-1 saveFormClose"
                                 data-bs-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-primary btn-xs py-1" id="save" onclick="addEmployee();">Save</button>
                         </div>
@@ -142,11 +134,11 @@
                             <input type="hidden" name="id" id="id" >
                         <div class="form-group">
                             <label for="editname" class="form-label">Name</label>
-                            <input type="text" name="editname" id="editname" class="form-control">
+                            <input type="text" name="editname" id="editname" class="form-control" oninput="validateText(this);">
                         </div>
                         <div class="form-group">
                             <label for="editemail" class="form-label">Email</label>
-                            <input type="email" name="editemail" id="editemail" class="form-control" >
+                            <input type="email" name="editemail" id="editemail" class="form-control"  onblur="duplicateEmail(this);" >
                         </div>
                         <div class="form-group">
                             <label for="editgender" class="form-label">gender</label>
@@ -170,11 +162,11 @@
                         </div>
                         <div class="form-group">
                             <label for="editsalary" class="form-label">Salary</label>
-                            <input type="number" name="editsalary" id="editsalary" class="form-control">
+                            <input type="number" name="editsalary" id="editsalary" class="form-control" oninput="validateSalary(this);">
                         </div>
                         <div class="form-group">
                             <label for="editcity" class="form-label">City</label>
-                            <input type="text" name="editcity" id="editcity" class="form-control">
+                            <input type="text" name="editcity" id="editcity" class="form-control" oninput="validateText(this);">
                         </div>
                         <br>
                         <div class="modal-footer">
@@ -209,7 +201,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script>
-function validateName(input){
+function validateText(input){
     const regex = /[0-9!@#$%^&*()_+{}\[\]:;|/='"<>,?~\\-]/;
     if (regex.test(input.value)) {
         $('#nameError').text('* Special Charater or Number not allowed');
@@ -228,14 +220,40 @@ function validateSalary(input){
         }
 }
 function validateEmail(input) {
+    
     const validateEmail = input.value;
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailPattern.test(validateEmail)) {
+      $('#alreadyExists').text('');
       $("#emailError").text('* Please enter a valid email address.');
     } else {
         $("#emailError").text('');
     }
 }
+function duplicateEmail(element){
+        var email = $(element).val();
+        $.ajax({
+            type: "get",
+            url: '{{url('checkEmail')}}',
+            data: {email:email},
+            dataType: "json",
+            success: function(response) {
+                if(response.exists){
+                    $('#alreadyExists').text('* Email is already Exists')
+                    $('#email').val('');
+                }
+            }
+        });
+    }
+    $('.saveFormClose').click(()=>{
+                    $('#name').val('');
+                    $('#email').val('');
+                    $('input[name="gender"]:checked').val('');
+                    $('#dob').val('');
+                    $('#age').val('');
+                    $('#salary').val('');
+                    $('#city').val('');
+    });
     </script>
     <script>
          $(document).ready(function(){

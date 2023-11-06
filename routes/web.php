@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\EmployeesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,3 +20,4 @@ Route::post("/employeeAdd",[EmployeeController::class,'employeeAdd']);
 Route::get('/employeeFetch/{id}',[EmployeeController::class,'employeeFetch']);
 Route::post('/employeeUpdate',[EmployeeController::class,'employeeUpdate']);
 Route::get('/employeDelete/{id}',[EmployeeController::class,'employeDelete']);
+Route::get('/checkEmail',[EmployeeController::class,'checkEmail']);

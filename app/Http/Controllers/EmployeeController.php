@@ -13,6 +13,15 @@ class EmployeeController extends Controller
     public function employeeList(){
         return Employee::all();
     }
+    public function checkEmail(Request $request){
+        $email = $request->email;
+        $isExists = Employee::where('email',$email)->first();
+        if($isExists){
+            return response()->json(array("exists" => true));
+        }else{
+            return response()->json(array("exists" => false));
+        }
+    }
     public function employeeAdd(Request $request){
         $validatedData = $request->validate([
             'name' => 'required',
