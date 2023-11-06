@@ -24,7 +24,6 @@
 <body>
     <div class="container mt-2">
     <div id="message-container">
-
     </div>
         <div class="card">
             <div class="card-body">
@@ -114,7 +113,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary btn-xs py-1"
                                 data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary btn-xs py-1" id="save" onclick="addEmployee();">Save changes</button>
+                            <button type="button" class="btn btn-primary btn-xs py-1" id="save" onclick="addEmployee();">Save</button>
                         </div>
                 </form>
                 </div>
@@ -172,7 +171,7 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary btn-xs py-1"
                                 data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary btn-xs py-1 update">save</button>
+                            <button type="button" class="btn btn-primary btn-xs py-1" onclick="updateEmployee()">Save</button>
                         </div>
                     </form>
                 </div>
@@ -201,44 +200,47 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script>
-         
          $(document).ready(function(){
             employeeList();
         });
-
+        $.ajaxSetup({
+          headers: {
+           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
         function employeeList() {
             $.ajax({
                 type: 'get',
                 url: "{{ url('view') }}",
                 success: function(response) {
+                    $('#employee_data').empty();
                     var tr = '';
-    for(let i=0;i<response.length;i++){
-        tr += '<tr>';
-        tr += '<td>'+ response[i].name +'</td>';
-        tr += '<td>'+ response[i].email +'</td>';
-        tr += '<td>'+ response[i].gender +'</td>';
-        tr += '<td>'+ response[i].dob +'</td>';
-        tr += '<td>'+ response[i].age +'</td>'
-        tr += '<td>'+ response[i].salary +'</td>' 
-        tr += '<td>'+ response[i].city +'</td>'; 
-        tr += '<td><div class="d-flex">';
-        tr += '<a class="btn btn-success" data-bs-target="#editEmployeeModal" data-bs-toggle="modal" onclick=viewEmployee("' + response[i].id +'")>Edit</a> &nbsp;&nbsp;' ;
-        tr += '<a class="btn btn-danger"  data-bs-target="#deleteEmployeeModal" data-bs-toggle="modal"  onclick=$("#delete_id").val("' +response[i].id+'")>Delete</a>';
-        tr += '</div></td>';
-        tr += '</tr>';
-    }
-    $('#employee_data').append(tr);
+                        for(let i=response.length-1;i>=0;i--){
+                            tr += '<tr>';
+                            tr += '<td>'+ response[i].name +'</td>';
+                            tr += '<td>'+ response[i].email +'</td>';
+                            tr += '<td>'+ response[i].gender +'</td>';
+                            tr += '<td>'+ response[i].dob +'</td>';
+                            tr += '<td>'+ response[i].age +'</td>'
+                            tr += '<td>'+ response[i].salary +'</td>' 
+                            tr += '<td>'+ response[i].city +'</td>'; 
+                            tr += '<td><div class="d-flex">';
+                            tr += '<a class="btn btn-success" data-bs-target="#editEmployeeModal" data-bs-toggle="modal" onclick=viewEmployee("' + response[i].id +'")>Edit</a> &nbsp;&nbsp;' ;
+                            tr += '<a class="btn btn-danger"  data-bs-target="#deleteEmployeeModal" data-bs-toggle="modal"  onclick=$("#delete_id").val("' +response[i].id+'")>Delete</a>';
+                            tr += '</div></td>';
+                            tr += '</tr>';
+                        }
+                        $('#employee_data').append(tr);
                 }
             });
         }
-
-                $('#dob').on('change',()=>{
+               $('#dob').on('change',()=>{
                var dob = new Date( $('#dob').val());
                var today = new Date();
                var age = today.getFullYear() - dob.getFullYear();
                if((dob.getFullYear() === today.getFullYear() && dob.getMonth() === today.getMonth() && dob.getDate() > today.getDate()) || (dob.getFullYear() === today.getFullYear() && dob.getMonth() > today.getMonth())||(dob.getFullYear() > today.getFullYear())){
                    $('#dobError').text('Please Select Correct Date Of Birth');
-                   $('#dob').val('');
+                   $('#age').val('');
                }else{
                    $('#dobError').text('');
                   if(today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())){
@@ -247,7 +249,6 @@
                   $('#age').val(age);
                }
             });
-
                 function addEmployee(){
                     var name = $('#name').val();
                     var email = $('#email').val();
@@ -259,23 +260,22 @@
                 if(name !== "" && email !== "" && gender !== "" && dob !== "" && age !== "" && salary !== "" && city !== "" ){
                     $("#save").attr("disabled", "disabled");
                     console.log($('#saveform').serialize());
-            $.ajax({
-               url: "{{url('employee-add')}}",
-               type:"POST",
-               data :{
-                  name:name,
-                  email:email,
-                  gender:gender,
-                  dob:dob,
-                  age:age,
-                  salary:salary,
-                  city:city,
-               },
-               success: function(response) {
-                    $('#addEmployeeModal').modal('hide');
-                    employeeList();
-                }
-            })
+                    $.post('{{url('employeeAdd')}}', {
+                        name: name,
+                        email: email,
+                        gender: gender,
+                        dob: dob,
+                        age: age,
+                        salary: salary,
+                        city: city
+                    }, function (response) {
+                        $('#addEmployeeModal').modal('hide');
+                        if (response.message) {
+                            $('#message-container').html('<div class="alert alert-success">' + response.message + '</div>');
+                        }
+                        employeeList();
+                        console.log('Status : '+ response.status + ',Response Message : '+response.message);
+                    });
                 }else{
                     alert('please fill all the fields');
                 }
@@ -304,18 +304,17 @@ function viewEmployee(id) {
                 }
             })
         }
-        $('.update').click(()=>{
+        function updateEmployee(){
             var editid = $('#id').val();
             var editname =$('#editname').val();
             var editemail = $('#editemail').val();
             var editgender = $('input[name="editgender"]:checked').val();
-            console.log(editgender);
             var editdob = $('#editdob').val();
             var editage =$('#editage').val();
             var editsalary = $('#editsalary').val();
             var editcity =$('#editcity').val();
             $.ajax({
-                url:'{{url('employeeupdate')}}',
+                url:'{{url('employeeUpdate')}}',
                 type:'post',
                 data:{
                     editid : editid,
@@ -326,26 +325,31 @@ function viewEmployee(id) {
                     editage : editage,
                     editsalary : editsalary,
                     editcity : editcity,
-                }, success: function(data) {
+                }, success: function(response) {
                     $('#editEmployeeModal').modal('hide');
-                    if (data.message) {
-                        $('#message-container').html('<div class="alert alert-success">' + data.message + '</div>');
+                    if (response.message) {
+                        $('#message-container').html('<div class="alert alert-success">' + response.message + '</div>');
                     }
                     employeeList();
-                }
+                    console.log('Status : '+ response.status + '; Response Message : '+response.message);
+                  }
             });
-        });
+        }
 
-       function deleteEmployee(){
+        function deleteEmployee(){
        var id = $("#delete_id").val();
        $('#deleteEmployeeModal').modal('hide');
-            console.log(id);
             $.ajax({
-               url : "{{ url('employee-delete') }}/" + id,
+               url : "{{ url('employeDelete') }}/" + id,
                type : "get",
                success:function(response){
-                employeeList();
-               }
+                   if (response.message) {
+                        $('#message-container').html('<div class="alert alert-danger">' + response.message + '</div>');
+                    }
+                    employeeList();
+                    console.log(response.status);
+                    console.log(response.message);
+                    }
             });
         }
 

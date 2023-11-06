@@ -11,7 +11,7 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $employees = Employee::all();
+         $employees = Employee::all(); 
         return $employees;
     }
     public function saveEmployee(Request $request)
@@ -26,9 +26,19 @@ class EmployeeController extends Controller
         $employee->city = $request->city;
         $saved = $employee->save();
         if ($saved) {
-            return response()->json(['message' => 'Record created succesfully!']);
-        } else {
-            return response()->json(['message' => 'Record created failed!']);
+            $response = [
+                'status'=>'200',
+                'success'=>true,
+                'message'=>'Record created successfully!'
+            ];
+            return $response;
+        }else{
+            $response = [
+                'status'=>'400',
+                'success'=>false,
+                'message'=>'Record created failed!'
+            ];
+            return $response;
         }
     }
 
@@ -49,18 +59,38 @@ class EmployeeController extends Controller
         $city = $request->editcity;
         $rowAffected = DB::update('update employee set name=?,email=?,gender=?,dob=?,age=?,salary=?,city=? where id =?', [$name, $email, $gender, $dob, $age, $salary, $city, $id]);
         if ($rowAffected > 0) {
-            return response()->json(['message' => 'Record updated succesfully!']);
+            $response = [
+                'status'=>'200',
+                'success'=>true,
+                'message'=>'Record updated succesfully!'
+            ];
+            return $response;
         } else {
-            return response()->json(['message' => 'Record update failed!']);
+            $response = [
+                'status'=>'400',
+                'success'=>false,
+                'message'=>'Record updated failed!'
+            ];
+            return $response;
         }
     }
     public function deleteEmployee($id)
     {
         $rowAffected = DB::delete('delete from employee where id =?', [$id]);
         if ($rowAffected > 0) {
-            return response()->json(['message' => 'Record deleted Successfully!']);
+            $response = [
+                'status'=>'200',
+                'success'=>true,
+                'message'=>'Record deleted succesfully!'
+            ];
+            return $response;
         } else {
-            return response()->json(['message' => 'Record delete failed!']);
+            $response = [
+                'status'=>'400',
+                'success'=>false,
+                'message'=>'Record deleted failed!'
+            ];
+            return $response;
         }
     }
 

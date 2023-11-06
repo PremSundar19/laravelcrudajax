@@ -645,3 +645,28 @@ function displayEmployee(){
     }
     $('#employee_data').append(tr);
 }
+
+
+//posting data to db 
+ $.ajax({
+        url: '{{url('employeeAdd')}}',
+        type:"POST",
+        data :{
+            name:name,
+            email:email,
+            gender:gender, 
+            dob:dob,
+            age:age,
+            salary:salary,
+            city:city,
+            },
+            success: function(response) {
+                $('#addEmployeeModal').modal('hide');
+                if (response.message) {
+                    $('#message-container').html('<div class="alert alert-success">' + response.message + '</div>');
+                }
+                    employeeList();
+                    console.log(response.status);
+                    console.log(response.message);
+                }
+         });
