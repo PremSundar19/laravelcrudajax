@@ -4,18 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
-use Session;
+use Illuminate\validate\rule;
+use Illuminate\Validation\ValidationException;
 use DB;
 
 class EmployeeController extends Controller
 {
-    public function index()
-    {
-         $employees = Employee::all(); 
-        return $employees;
+    public function index(){
+        return Employee::all();
     }
-    public function saveEmployee(Request $request)
-    {
+    public function saveEmployee(Request $request){
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'email' => 'required|unique:employee,email', 
+            'gender' => 'required',
+            'dob' => 'required|date',
+            'age' => 'required|integer',
+            'salary' => 'required|numeric',
+            'city' => 'required',
+        ]);
+     
         $employee = new Employee();
         $employee->name = $request->name;
         $employee->email = $request->email;
@@ -42,13 +50,11 @@ class EmployeeController extends Controller
         }
     }
 
-    public function fetchEmployee($id)
-    {
+    public function fetchEmployee($id){
         return Employee::find($id);
     }
 
-    public function updateEmployee(Request $request)
-    {
+    public function updateEmployee(Request $request){
         $id = $request->editid;
         $name = $request->editname;
         $email = $request->editemail;
@@ -74,8 +80,7 @@ class EmployeeController extends Controller
             return $response;
         }
     }
-    public function deleteEmployee($id)
-    {
+    public function deleteEmployee($id){
         $rowAffected = DB::delete('delete from employee where id =?', [$id]);
         if ($rowAffected > 0) {
             $response = [
@@ -93,5 +98,4 @@ class EmployeeController extends Controller
             return $response;
         }
     }
-
 }

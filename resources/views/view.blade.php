@@ -25,6 +25,7 @@
     <div class="container mt-2">
     <div id="message-container">
     </div>
+    <div id="errorMessage-container"></div>
         <div class="card">
             <div class="card-body">
                 <div class="bg-success">
@@ -57,7 +58,6 @@
                         </tr>
                     </thead>
                     <tbody id="employee_data">
-                        
                     </tbody>
                 </table>
             </div>
@@ -75,11 +75,13 @@
                 <form id="saveform" method="post">
                 <div class="form-group">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" name="name" id="name" class="form-control">
+                            <input type="text" name="name" id="name" class="form-control" oninput="validateName(this);">
+                            <span id="nameError" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email" class="form-control">
+                            <input type="email" name="email" id="email" class="form-control" oninput="validateEmail(this);">
+                            <span id="emailError" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="gender" class="form-label">gender</label>
@@ -103,11 +105,13 @@
                         </div>
                         <div class="form-group">
                             <label for="salary" class="form-label">Salary</label>
-                            <input type="number" name="salary" id="salary" class="form-control">
+                            <input type="number" name="salary" id="salary" class="form-control" oninput="validateSalary(this);">
+                            <span id="salaryError" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="city" class="form-label">City</label>
                             <input type="text" name="city" id="city" class="form-control">
+                            <span id="cityError" class="text-danger"></span>
                         </div>
                         <br>
                         <div class="modal-footer">
@@ -129,7 +133,7 @@
                     <h5 class="modal-title" id="editEmployeeModal">Employee Edit Form</h5>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="post">
+                    <form id="editform" method="post">
                     @csrf
                             <input type="hidden" name="id" id="id" >
                         <div class="form-group">
@@ -153,7 +157,8 @@
                         </div>
                         <div class="form-group">
                             <label for="editdob" class="form-label">Date Of Birth</label>
-                            <input type="date" name="editdob" id="editdob" class="form-control" >
+                            <input type="date" name="editdob" id="editdob" class="form-control">
+                            <span id="editdobError" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="editage" class="form-label">Age</label>
@@ -199,6 +204,37 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+        function validateName(input){
+    const regex = /[0-9!@#$%^&*()_+{}\[\]:;|/='"<>,?~\\-]/;
+    if (regex.test(input.value)) {
+        $('#nameError').text('* Special Charater or Number not allowed');
+        input.value= input.value.replace(/[^A-Za-z]/g, '');
+    } else { 
+        $('#nameError').text('');
+    }
+}
+function validateSalary(input){
+    const salary = parseFloat(input.value);
+    if (isNaN(salary) || salary < 0) {
+        $('#salaryError').text('* Salary must be a non-negative number.');
+        input.value =  "";
+        } else {
+            $('#salaryError').text('');
+        }
+}
+function validateEmail(input) {
+    const email = input.value;
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailPattern.test(email)) {
+      $("#emailError").text('* Please enter a valid email address.');
+    } else {
+        $("#emailError").text('');
+    }
+}
+
+    </script>
+
     <script>
          $(document).ready(function(){
             employeeList();
@@ -249,7 +285,35 @@
                   $('#age').val(age);
                }
             });
-                function addEmployee(){
+            $('#editdob').on('change',()=>{
+               var dob = new Date( $('#editdob').val());
+               var today = new Date();
+               var age = today.getFullYear() - dob.getFullYear();
+               if((dob.getFullYear() === today.getFullYear() && dob.getMonth() === today.getMonth() && dob.getDate() > today.getDate()) || (dob.getFullYear() === today.getFullYear() && dob.getMonth() > today.getMonth())||(dob.getFullYear() > today.getFullYear())){
+                   $('#editdobError').text('Please Select Correct Date Of Birth');
+                   $('#editage').val('');
+               }else{
+                   $('#dobError').text('');
+                  if(today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())){
+                    age--;
+                  }
+                  $('#editage').val(age);
+               }
+            });
+        function successMessage(message) {
+             $('#message-container').html('<div class="alert alert-success">' + message + '</div>');
+             employeeList();
+        }
+        function handleValidationErrors(errors) {
+            console.log('error');
+            var errorHtml = '<div class="alert alert-danger">Validation Errors:<ul>';
+            $.each(errors, function (key, value) {
+               errorHtml += '<li>' + value + '</li>';
+            });
+            errorHtml += '</ul></div>';
+            $('#errormessage-container').html(errorHtml);
+        }
+            function addEmployee(){
                     var name = $('#name').val();
                     var email = $('#email').val();
                     var gender = $('input[name="gender"]:checked').val();
@@ -259,7 +323,6 @@
                     var city = $('#city').val();
                 if(name !== "" && email !== "" && gender !== "" && dob !== "" && age !== "" && salary !== "" && city !== "" ){
                     $("#save").attr("disabled", "disabled");
-                    console.log($('#saveform').serialize());
                     $.post('{{url('employeeAdd')}}', {
                         name: name,
                         email: email,
@@ -270,11 +333,12 @@
                         city: city
                     }, function (response) {
                         $('#addEmployeeModal').modal('hide');
-                        if (response.message) {
-                            $('#message-container').html('<div class="alert alert-success">' + response.message + '</div>');
+                        if(response.status === '200'){
+                        successMessage(response.message);
+                        console.log('Status : '+ response.status + ', Response Message : '+response.message);
+                        }else{
+                            handleValidationErrors(response.errors);
                         }
-                        employeeList();
-                        console.log('Status : '+ response.status + ',Response Message : '+response.message);
                     });
                 }else{
                     alert('please fill all the fields');
@@ -327,32 +391,23 @@ function viewEmployee(id) {
                     editcity : editcity,
                 }, success: function(response) {
                     $('#editEmployeeModal').modal('hide');
-                    if (response.message) {
-                        $('#message-container').html('<div class="alert alert-success">' + response.message + '</div>');
-                    }
-                    employeeList();
-                    console.log('Status : '+ response.status + '; Response Message : '+response.message);
+                    successMessage(response.message);
+                    console.log('Status : ' + response.status + ', Response Message : ' + response.message);
                   }
             });
         }
-
         function deleteEmployee(){
-       var id = $("#delete_id").val();
-       $('#deleteEmployeeModal').modal('hide');
+            var id = $("#delete_id").val();
+            $('#deleteEmployeeModal').modal('hide');
             $.ajax({
                url : "{{ url('employeDelete') }}/" + id,
                type : "get",
                success:function(response){
-                   if (response.message) {
-                        $('#message-container').html('<div class="alert alert-danger">' + response.message + '</div>');
-                    }
-                    employeeList();
-                    console.log(response.status);
-                    console.log(response.message);
+                    successMessage(response.message);
+                    console.log('Status : ' + response.status + ', Response Message : ' + response.message);
                     }
             });
         }
-
     </script>
 </body>
 </html>
