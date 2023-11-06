@@ -315,9 +315,10 @@
         $('#editdob').on('change', () => {
             calculateAge('#editdob', '#editage', '#editdobError');
         });
-        function successMessage(message) {
-             $('#message-container').html('<div class="alert alert-success">' + message + '</div>');
+        function successMessage(message,status) {
+             $('#message-container').html('<div class="alert alert-success>' + message + '</div>');
              employeeList();
+             console.log('Status : ' + status + ', Response Message : ' + message);
         }
         function addEmployee(){
             var name = $('#name').val();
@@ -339,8 +340,7 @@
                         city: city
                     }, function (response) {
                         $('#addEmployeeModal').modal('hide');
-                        successMessage(response.message);
-                        console.log('Status : '+ response.status + ', Response Message : '+response.message);
+                        successMessage(response.message,response.status);
                     });
                 }else{
                     alert('please fill all the fields');
@@ -392,8 +392,7 @@
                     editcity : editcity,
                 }, success: function(response) {
                     $('#editEmployeeModal').modal('hide');
-                    successMessage(response.message);
-                    console.log('Status : ' + response.status + ', Response Message : ' + response.message);
+                    successMessage(response.message,response.status);
                   }
             });
         }
@@ -404,9 +403,8 @@
                url : "{{ url('employeDelete') }}/" + id,
                type : "get",
                success:function(response){
-                    successMessage(response.message);
-                    console.log('Status : ' + response.status + ', Response Message : ' + response.message);
-                    }
+                successMessage(response.message,response.status);
+                }
             });
         }
     </script>

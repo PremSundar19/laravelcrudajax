@@ -39,7 +39,8 @@ class EmployeeController extends Controller
             $response = [
                 'status' => '200',
                 'success' => true,
-                'message' => 'Record created successfully!'
+                'message' => 'Record created successfully!',
+                'class' =>'success',
             ];
             return $response;
         } else {
@@ -72,7 +73,8 @@ class EmployeeController extends Controller
             $response = [
                 'status' => '200',
                 'success' => true,
-                'message' => 'Record updated succesfully!'
+                'message' => 'Record updated succesfully!',
+                'class' =>'secondary',
             ];
             return $response;
         } else {
@@ -91,7 +93,8 @@ class EmployeeController extends Controller
             $response = [
                 'status' => '200',
                 'success' => true,
-                'message' => 'Record deleted succesfully!'
+                'message' => 'Record deleted succesfully!',
+                'class' =>'danger',
             ];
             return $response;
         } else {
