@@ -316,7 +316,7 @@
             calculateAge('#editdob', '#editage', '#editdobError');
         });
         function successMessage(message,status) {
-             $('#message-container').html('<div class="alert alert-success>' + message + '</div>');
+             $('#message-container').html('<div class="alert alert-success">' + message + '</div>');
              employeeList();
              console.log('Status : ' + status + ', Response Message : ' + message);
         }
@@ -340,7 +340,7 @@
                         city: city
                     }, function (response) {
                         $('#addEmployeeModal').modal('hide');
-                        successMessage(response.message,response.status);
+                              successMessage(response.message,response.status);
                     });
                 }else{
                     alert('please fill all the fields');
@@ -403,8 +403,8 @@
                url : "{{ url('employeDelete') }}/" + id,
                type : "get",
                success:function(response){
-                successMessage(response.message,response.status);
-                }
+                    successMessage(response.message,response.status);
+                    }
             });
         }
     </script>
