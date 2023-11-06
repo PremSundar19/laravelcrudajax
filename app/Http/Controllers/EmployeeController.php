@@ -23,17 +23,6 @@ class EmployeeController extends Controller
         }
     }
     public function employeeAdd(Request $request){
-        $validatedData = $request->validate([
-            'name' => 'required',
-            'email' => 'required|unique:employee,email', 
-            'gender' => 'required',
-            'dob' => 'required|date',
-            'age' => 'required|integer',
-            'salary' => 'required|numeric',
-            'city' => 'required',
-        ]);
-   
-        
         $employee = new Employee();
         $employee->name = $request->name;
         $employee->email = $request->email;
@@ -90,7 +79,7 @@ class EmployeeController extends Controller
             return $response;
         }
     }
-    public function employeeDelete($id){
+    public function deleteEmployee($id){
         $rowAffected = DB::delete('delete from employee where id =?', [$id]);
         if ($rowAffected > 0) {
             $response = [

@@ -20,7 +20,6 @@
     <div class="container mt-2">
     <div id="message-container">
     </div>
-    <div id="errorMessage-container"></div>
         <div class="card">
             <div class="card-body">
                 <div class="bg-success">
@@ -70,12 +69,12 @@
                 <form id="saveform" method="post">
                          <div class="form-group">
                              <label for="name" class="form-label">Name</label>
-                            <input type="text" name="name" id="name" class="form-control" oninput="validateText(this);">
-                            <span id="nameError" class="text-danger"></span>
+                            <input type="text" name="name" id="name" class="form-control" oninput=" validateText(this);">
+                            <span id="nameError2" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email"   onblur="duplicateEmail(this);"  class="form-control" oninput="validateEmail(this);">
+                            <input type="email" name="email" id="email"   onblur="duplicateEmail(this);"  class="form-control">
                             <span id="emailError" class="text-danger"></span>
                             <span id="alreadyExists" class="text-danger"></span>
                         </div>
@@ -210,6 +209,15 @@ function validateText(input){
         $('#nameError').text('');
     }
 }
+$('#name').on('blur',()=>{
+    var name = $('#name').val();
+    if(name.length < 5 ){
+        $('#nameError2').text('* Name Should be aleast 5 letters');
+        $('#name').val('');
+    }else{
+        $('#nameError2').text('');
+    }
+});
 function validateSalary(input){
     const salary = parseFloat(input.value);
     if (isNaN(salary) || salary < 0) {
@@ -220,7 +228,6 @@ function validateSalary(input){
         }
 }
 function validateEmail(input) {
-    
     const validateEmail = input.value;
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!emailPattern.test(validateEmail)) {
@@ -239,20 +246,16 @@ function duplicateEmail(element){
             dataType: "json",
             success: function(response) {
                 if(response.exists){
-                    $('#alreadyExists').text('* Email is already Exists')
+                    $('#alreadyExists').text('* Email is already exists')
                     $('#email').val('');
                 }
             }
         });
     }
     $('.saveFormClose').click(()=>{
-                    $('#name').val('');
-                    $('#email').val('');
-                    $('input[name="gender"]:checked').val('');
-                    $('#dob').val('');
-                    $('#age').val('');
-                    $('#salary').val('');
-                    $('#city').val('');
+                    $('#nameError2').text('');
+                    $('#name,#email,#dob,#age,#salary,#city').val('');
+                    $('input[type="radio"][name="gender"]').prop('checked', false);
     });
     </script>
     <script>
@@ -290,36 +293,30 @@ function duplicateEmail(element){
                 }
             });
         }
-               $('#dob').on('change',()=>{
-               var dob = new Date( $('#dob').val());
-               var today = new Date();
-               var age = today.getFullYear() - dob.getFullYear();
-               if((dob.getFullYear() === today.getFullYear() && dob.getMonth() === today.getMonth() && dob.getDate() > today.getDate()) || (dob.getFullYear() === today.getFullYear() && dob.getMonth() > today.getMonth())||(dob.getFullYear() > today.getFullYear())){
-                   $('#dobError').text('Please Select Correct Date Of Birth');
-                   $('#age').val('');
-               }else{
-                   $('#dobError').text('');
-                  if(today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())){
-                    age--;
-                  }
-                  $('#age').val(age);
-               }
-            });
-            $('#editdob').on('change',()=>{
-               var dob = new Date( $('#editdob').val());
-               var today = new Date();
-               var age = today.getFullYear() - dob.getFullYear();
-               if((dob.getFullYear() === today.getFullYear() && dob.getMonth() === today.getMonth() && dob.getDate() > today.getDate()) || (dob.getFullYear() === today.getFullYear() && dob.getMonth() > today.getMonth())||(dob.getFullYear() > today.getFullYear())){
-                   $('#editdobError').text('Please Select Correct Date Of Birth');
-                   $('#editage').val('');
-               }else{
-                   $('#dobError').text('');
-                  if(today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())){
-                    age--;
-                  }
-                  $('#editage').val(age);
-               }
-            });
+function calculateAge(dobId, ageId, dobErrorId) {
+            var dob = new Date($(dobId).val());
+            var today = new Date();
+            var age = today.getFullYear() - dob.getFullYear();
+            if (dob > today ||(dob.getFullYear() === today.getFullYear() && dob.getMonth() === today.getMonth() && dob.getDate() > today.getDate())) {
+                $(dobErrorId).text('Please Select Correct Date Of Birth');
+                $(ageId).val('');
+            } else {
+                $(dobErrorId).text('');
+                if (today.getMonth() < dob.getMonth() ||(today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
+                age--;
+                }
+                $(ageId).val(age);
+            }
+}
+
+$('#dob').on('change', () => {
+  calculateAge('#dob', '#age', '#dobError');
+});
+
+$('#editdob').on('change', () => {
+  calculateAge('#editdob', '#editage', '#editdobError');
+});
+
         function successMessage(message) {
              $('#message-container').html('<div class="alert alert-success">' + message + '</div>');
              employeeList();
@@ -355,7 +352,7 @@ function duplicateEmail(element){
 function viewEmployee(id) {
             $.ajax({
                 type: 'get',
-                url: "{{ url('employee') }}/" + id,
+                url: "{{ url('employeeFetch') }}/" + id,
                 success: function(response) {
                     $('#id').val(response.id);
                     $('#editname').val(response.name);
