@@ -10,10 +10,10 @@ use DB;
 
 class EmployeeController extends Controller
 {
-    public function index(){
+    public function employeeList(){
         return Employee::all();
     }
-    public function saveEmployee(Request $request){
+    public function employeeAdd(Request $request){
         $validatedData = $request->validate([
             'name' => 'required',
             'email' => 'required|unique:employee,email', 
@@ -23,7 +23,8 @@ class EmployeeController extends Controller
             'salary' => 'required|numeric',
             'city' => 'required',
         ]);
-     
+   
+        
         $employee = new Employee();
         $employee->name = $request->name;
         $employee->email = $request->email;
@@ -50,11 +51,11 @@ class EmployeeController extends Controller
         }
     }
 
-    public function fetchEmployee($id){
+    public function employeeFetch($id){
         return Employee::find($id);
     }
 
-    public function updateEmployee(Request $request){
+    public function employeeUpdate(Request $request){
         $id = $request->editid;
         $name = $request->editname;
         $email = $request->editemail;
@@ -80,7 +81,7 @@ class EmployeeController extends Controller
             return $response;
         }
     }
-    public function deleteEmployee($id){
+    public function employeeDelete($id){
         $rowAffected = DB::delete('delete from employee where id =?', [$id]);
         if ($rowAffected > 0) {
             $response = [

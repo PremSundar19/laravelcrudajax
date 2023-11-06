@@ -80,8 +80,12 @@
                         </div>
                         <div class="form-group">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" oninput="validateEmail(this);">
+                            <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" oninput="validateEmail(this);">
+                            @error('email')
+                             <div class="alert alert-danger">{{ $message }}</div>
+                            @enderror
                             <span id="emailError" class="text-danger"></span>
+                            <span id="alreadyExists" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label for="gender" class="form-label">gender</label>
@@ -205,7 +209,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script>
-        function validateName(input){
+function validateName(input){
     const regex = /[0-9!@#$%^&*()_+{}\[\]:;|/='"<>,?~\\-]/;
     if (regex.test(input.value)) {
         $('#nameError').text('* Special Charater or Number not allowed');
@@ -224,17 +228,15 @@ function validateSalary(input){
         }
 }
 function validateEmail(input) {
-    const email = input.value;
+    const validateEmail = input.value;
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailPattern.test(email)) {
+    if (!emailPattern.test(validateEmail)) {
       $("#emailError").text('* Please enter a valid email address.');
     } else {
         $("#emailError").text('');
     }
 }
-
     </script>
-
     <script>
          $(document).ready(function(){
             employeeList();
@@ -247,7 +249,7 @@ function validateEmail(input) {
         function employeeList() {
             $.ajax({
                 type: 'get',
-                url: "{{ url('view') }}",
+                url: "{{ url('employeeList') }}",
                 success: function(response) {
                     $('#employee_data').empty();
                     var tr = '';
@@ -304,15 +306,6 @@ function validateEmail(input) {
              $('#message-container').html('<div class="alert alert-success">' + message + '</div>');
              employeeList();
         }
-        function handleValidationErrors(errors) {
-            console.log('error');
-            var errorHtml = '<div class="alert alert-danger">Validation Errors:<ul>';
-            $.each(errors, function (key, value) {
-               errorHtml += '<li>' + value + '</li>';
-            });
-            errorHtml += '</ul></div>';
-            $('#errormessage-container').html(errorHtml);
-        }
             function addEmployee(){
                     var name = $('#name').val();
                     var email = $('#email').val();
@@ -333,12 +326,8 @@ function validateEmail(input) {
                         city: city
                     }, function (response) {
                         $('#addEmployeeModal').modal('hide');
-                        if(response.status === '200'){
                         successMessage(response.message);
                         console.log('Status : '+ response.status + ', Response Message : '+response.message);
-                        }else{
-                            handleValidationErrors(response.errors);
-                        }
                     });
                 }else{
                     alert('please fill all the fields');
