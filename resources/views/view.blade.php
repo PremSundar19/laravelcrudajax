@@ -200,63 +200,63 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script>
-function validateText(input){
-    const regex = /[0-9!@#$%^&*()_+{}\[\]:;|/='"<>,?~\\-]/;
-    if (regex.test(input.value)) {
-        $('#nameError').text('* Special Charater or Number not allowed');
-        input.value= input.value.replace(/[^A-Za-z]/g, '');
-    } else { 
-        $('#nameError').text('');
-    }
-}
-$('#name').on('blur',()=>{
-    var name = $('#name').val();
-    if(name.length < 5 ){
-        $('#nameError2').text('* Name Should be aleast 5 letters');
-        $('#name').val('');
-    }else{
-        $('#nameError2').text('');
-    }
-});
-function validateSalary(input){
-    const salary = parseFloat(input.value);
-    if (isNaN(salary) || salary < 0) {
-        $('#salaryError').text('* Salary must be a non-negative number.');
-        input.value =  "";
-        } else {
-            $('#salaryError').text('');
-        }
-}
-function validateEmail(input) {
-    const validateEmail = input.value;
-    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailPattern.test(validateEmail)) {
-      $('#alreadyExists').text('');
-      $("#emailError").text('* Please enter a valid email address.');
-    } else {
-        $("#emailError").text('');
-    }
-}
-function duplicateEmail(element){
-        var email = $(element).val();
-        $.ajax({
-            type: "get",
-            url: '{{url('checkEmail')}}',
-            data: {email:email},
-            dataType: "json",
-            success: function(response) {
-                if(response.exists){
-                    $('#alreadyExists').text('* Email is already exists')
-                    $('#email').val('');
-                }
+        function validateText(input){
+            const regex = /[0-9!@#$%^&*()_+{}\[\]:;|/='"<>,?~\\-]/;
+            if (regex.test(input.value)) {
+                $('#nameError').text('* Special Charater or Number not allowed');
+                input.value= input.value.replace(/[^A-Za-z]/g, '');
+            } else { 
+                $('#nameError').text('');
             }
+        }
+        $('#name').on('blur',()=>{
+                var name = $('#name').val();
+                if(name.length < 5 ){
+                    $('#nameError2').text('* Name Should be aleast 5 letters');
+                    $('#name').val('');
+                }else{
+                    $('#nameError2').text('');
+                }
         });
-    }
-    $('.saveFormClose').click(()=>{
+       function validateSalary(input){
+                const salary = parseFloat(input.value);
+                if (isNaN(salary) || salary < 0) {
+                        $('#salaryError').text('* Salary must be a non-negative number.');
+                        input.value =  "";
+                    } else {
+                        $('#salaryError').text('');
+                    }
+        }
+        function validateEmail(input) {
+                    const validateEmail = input.value;
+                    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+                    if (!emailPattern.test(validateEmail)) {
+                          $('#alreadyExists').text('');
+                          $("#emailError").text('* Please enter a valid email address.');
+                    } else {
+                        $("#emailError").text('');
+                    }
+        }
+        function duplicateEmail(element){
+           var email = $(element).val();
+                $.ajax({
+                    type: "get",
+                    url: '{{url('checkEmail')}}',
+                    data: {email:email},
+                    dataType: "json",
+                    success: function(response) {
+                        if(response.exists){
+                            $('#alreadyExists').text('* Email is already exists')
+                            $('#email').val('');
+                        }
+                    }
+                });
+        }
+        $('.saveFormClose').click(()=>{
                     $('#nameError2').text('');
                     $('#name,#email,#dob,#age,#salary,#city').val('');
                     $('input[type="radio"][name="gender"]').prop('checked', false);
-    });
+        });
     </script>
     <script>
          $(document).ready(function(){
@@ -293,7 +293,7 @@ function duplicateEmail(element){
                 }
             });
         }
-function calculateAge(dobId, ageId, dobErrorId) {
+        function calculateAge(dobId, ageId, dobErrorId) {
             var dob = new Date($(dobId).val());
             var today = new Date();
             var age = today.getFullYear() - dob.getFullYear();
@@ -307,28 +307,26 @@ function calculateAge(dobId, ageId, dobErrorId) {
                 }
                 $(ageId).val(age);
             }
-}
+        }
 
-$('#dob').on('change', () => {
-  calculateAge('#dob', '#age', '#dobError');
-});
-
-$('#editdob').on('change', () => {
-  calculateAge('#editdob', '#editage', '#editdobError');
-});
-
+        $('#dob').on('change', () => {
+            calculateAge('#dob', '#age', '#dobError');
+        });
+        $('#editdob').on('change', () => {
+            calculateAge('#editdob', '#editage', '#editdobError');
+        });
         function successMessage(message) {
              $('#message-container').html('<div class="alert alert-success">' + message + '</div>');
              employeeList();
         }
-            function addEmployee(){
-                    var name = $('#name').val();
-                    var email = $('#email').val();
-                    var gender = $('input[name="gender"]:checked').val();
-                    var dob = $('#dob').val();
-                    var age = $('#age').val();
-                    var salary = $('#salary').val();
-                    var city = $('#city').val();
+        function addEmployee(){
+            var name = $('#name').val();
+            var email = $('#email').val();
+            var gender = $('input[name="gender"]:checked').val();
+            var dob = $('#dob').val();
+            var age = $('#age').val();
+            var salary = $('#salary').val();
+            var city = $('#city').val();
                 if(name !== "" && email !== "" && gender !== "" && dob !== "" && age !== "" && salary !== "" && city !== "" ){
                     $("#save").attr("disabled", "disabled");
                     $.post('{{url('employeeAdd')}}', {
@@ -349,7 +347,7 @@ $('#editdob').on('change', () => {
                 }
                 }
 
-function viewEmployee(id) {
+        function viewEmployee(id) {
             $.ajax({
                 type: 'get',
                 url: "{{ url('employeeFetch') }}/" + id,
