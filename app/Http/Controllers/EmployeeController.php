@@ -10,19 +10,22 @@ use DB;
 
 class EmployeeController extends Controller
 {
-    public function employeeList(){
+    public function employeeList()
+    {
         return Employee::all();
     }
-    public function checkEmail(Request $request){
+    public function checkEmail(Request $request)
+    {
         $email = $request->email;
-        $isExists = Employee::where('email',$email)->first();
-        if($isExists){
+        $isExists = Employee::where('email', $email)->first();
+        if ($isExists) {
             return response()->json(array("exists" => true));
-        }else{
+        } else {
             return response()->json(array("exists" => false));
         }
     }
-    public function employeeAdd(Request $request){
+    public function employeeAdd(Request $request)
+    {
         $employee = new Employee();
         $employee->name = $request->name;
         $employee->email = $request->email;
@@ -34,26 +37,28 @@ class EmployeeController extends Controller
         $saved = $employee->save();
         if ($saved) {
             $response = [
-                'status'=>'200',
-                'success'=>true,
-                'message'=>'Record created successfully!'
+                'status' => '200',
+                'success' => true,
+                'message' => 'Record created successfully!'
             ];
             return $response;
-        }else{
+        } else {
             $response = [
-                'status'=>'400',
-                'success'=>false,
-                'message'=>'Record created failed!'
+                'status' => '400',
+                'success' => false,
+                'message' => 'Record created failed!'
             ];
             return $response;
         }
     }
 
-    public function employeeFetch($id){
+    public function employeeFetch($id)
+    {
         return Employee::find($id);
     }
 
-    public function employeeUpdate(Request $request){
+    public function employeeUpdate(Request $request)
+    {
         $id = $request->editid;
         $name = $request->editname;
         $email = $request->editemail;
@@ -65,34 +70,35 @@ class EmployeeController extends Controller
         $rowAffected = DB::update('update employee set name=?,email=?,gender=?,dob=?,age=?,salary=?,city=? where id =?', [$name, $email, $gender, $dob, $age, $salary, $city, $id]);
         if ($rowAffected > 0) {
             $response = [
-                'status'=>'200',
-                'success'=>true,
-                'message'=>'Record updated succesfully!'
+                'status' => '200',
+                'success' => true,
+                'message' => 'Record updated succesfully!'
             ];
             return $response;
         } else {
             $response = [
-                'status'=>'400',
-                'success'=>false,
-                'message'=>'Record updated failed!'
+                'status' => '400',
+                'success' => false,
+                'message' => 'Record updated failed!'
             ];
             return $response;
         }
     }
-    public function deleteEmployee($id){
+    public function employeeDelete($id)
+    {
         $rowAffected = DB::delete('delete from employee where id =?', [$id]);
         if ($rowAffected > 0) {
             $response = [
-                'status'=>'200',
-                'success'=>true,
-                'message'=>'Record deleted succesfully!'
+                'status' => '200',
+                'success' => true,
+                'message' => 'Record deleted succesfully!'
             ];
             return $response;
         } else {
             $response = [
-                'status'=>'400',
-                'success'=>false,
-                'message'=>'Record deleted failed!'
+                'status' => '400',
+                'success' => false,
+                'message' => 'Record deleted failed!'
             ];
             return $response;
         }

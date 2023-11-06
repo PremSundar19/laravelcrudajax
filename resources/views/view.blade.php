@@ -346,7 +346,6 @@
                     alert('please fill all the fields');
                 }
                 }
-
         function viewEmployee(id) {
             $.ajax({
                 type: 'get',
@@ -357,11 +356,11 @@
                     $('#editemail').val(response.email);
                     genderValue = response.gender;
                             if(genderValue === "Male"){
-                            $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
+                                $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
                             }else if(genderValue === "Female"){
-                            $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
+                                $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
                             }else{
-                            $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
+                                $('input[name="editgender"][value="' + genderValue + '"]').prop('checked', true);
                             }
                     $('#editdob').val(response.dob);
                     $('#editage').val(response.age);
