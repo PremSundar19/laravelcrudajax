@@ -18,15 +18,14 @@
 </head>
 <body>
     <div class="container mt-2">
-    <div id="message-container">
-    </div>
+    <div id="message-container"></div>
         <div class="card">
             <div class="card-body">
                 <div class="bg-success">
                     <span id="newEmployeeAddedMessage"></span>
                 </div>
             <div class="bg-secondary  p-2  m-2">
-                        <h5 class="text-dark text-center">Laravel Ajax CRUD operation</h5>
+                        <h5 class="text-dark text-center">Laravel AJAX CRUD Operation</h5>
                     </div>
                 <div class="row">
                         <div class="col-sm-6">
@@ -57,7 +56,7 @@
             </div>
         </div>
     </div>
-     <!-- Create Employee -->
+     <!-- Create modal -->
      <div id="addEmployeeModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -79,7 +78,7 @@
                             <span id="alreadyExists" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label for="gender" class="form-label">gender</label>
+                            <label class="form-label">gender</label>
                             <div>
                                 <input type="radio" name="gender" id="male" value="Male">
                                 <label for="male" class="form-label">Male</label>
@@ -119,13 +118,12 @@
             </div>
         </div>
     </div>
-    <!-- Edit Form -->
-    <div class="modal fade" id="editEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
-        aria-hidden="true">
+    <!-- Edit modal -->
+    <div class="modal fade" id="editEmployeeModal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editEmployeeModal">Employee Edit Form</h5>
+                    <h5 class="modal-title" id="editEmployee">Employee Edit Form</h5>
                 </div>
                 <div class="modal-body">
                     <form id="editform" method="post">
@@ -140,7 +138,7 @@
                             <input type="email" name="editemail" id="editemail" class="form-control"  onblur="duplicateEmail(this);" >
                         </div>
                         <div class="form-group">
-                            <label for="editgender" class="form-label">gender</label>
+                            <label class="form-label">gender</label>
                             <div>
                                 <input type="radio" name="editgender" id="editmale" value="Male">
                                 <label for="editmale" class="form-label">Male</label>
@@ -198,7 +196,7 @@
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script>
         function validateText(input){
             const regex = /[0-9!@#$%^&*()_+{}\[\]:;|/='"<>,?~\\-]/;
@@ -259,7 +257,7 @@
         });
     </script>
     <script>
-         $(document).ready(function(){
+         $(document).ready(()=>{
             employeeList();
         });
         $.ajaxSetup({
@@ -308,7 +306,6 @@
                 $(ageId).val(age);
             }
         }
-
         $('#dob').on('change', () => {
             calculateAge('#dob', '#age', '#dobError');
         });
@@ -317,6 +314,9 @@
         });
         function successMessage(message,status) {
              $('#message-container').html('<div class="alert alert-success">' + message + '</div>');
+             setTimeout(function () {
+                 $('#message-container').empty();
+             }, 4000);
              employeeList();
              console.log('Status : ' + status + ', Response Message : ' + message);
         }
