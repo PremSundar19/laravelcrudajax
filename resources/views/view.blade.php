@@ -370,27 +370,21 @@
             })
         }
         function updateEmployee(){
-            var editid = $('#id').val();
-            var editname =$('#editname').val();
-            var editemail = $('#editemail').val();
-            var editgender = $('input[name="editgender"]:checked').val();
-            var editdob = $('#editdob').val();
-            var editage =$('#editage').val();
-            var editsalary = $('#editsalary').val();
-            var editcity =$('#editcity').val();
+            var data = {
+             editid : $('#id').val(),
+             editname : $('#editname').val(),
+             editemail : $('#editemail').val(),
+             editgender : $('input[name="editgender"]:checked').val(),
+             editdob : $('#editdob').val(),
+             editage : $('#editage').val(),
+             editsalary : $('#editsalary').val(),
+             editcity :$('#editcity').val(),
+            };
             $.ajax({
                 url:'{{url('employeeUpdate')}}',
                 type:'post',
-                data:{
-                    editid : editid,
-                    editname : editname,
-                    editemail : editemail,
-                    editgender : editgender,
-                    editdob : editdob,
-                    editage : editage,
-                    editsalary : editsalary,
-                    editcity : editcity,
-                }, success: function(response) {
+                data:data, 
+                success: function(response) {
                     $('#editEmployeeModal').modal('hide');
                     successMessage(response.message,response.status);
                   }
