@@ -387,7 +387,7 @@
                 success: function(response) {
                     $('#editEmployeeModal').modal('hide');
                     successMessage(response.message,response.status);
-                  }
+                }
             });
         }
         function deleteEmployee(){
@@ -398,7 +398,7 @@
                type : "get",
                success:function(response){
                     successMessage(response.message,response.status);
-                    }
+               }
             });
         }
     </script>
