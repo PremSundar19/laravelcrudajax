@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use DB;
+use Response;
 
 class EmployeeController extends Controller
 {
@@ -14,8 +15,7 @@ class EmployeeController extends Controller
     }
     public function checkEmail(Request $request)
     {
-        $email = $request->email;
-        $isExists = Employee::where('email', $email)->first();
+        $isExists = Employee::where('email', $request->email)->first();
         if ($isExists) {
             return response()->json(array("exists" => true));
         } else {
@@ -67,19 +67,9 @@ class EmployeeController extends Controller
         $city = $request->editcity;
         $rowAffected = DB::update('update employee set name=?,email=?,gender=?,dob=?,age=?,salary=?,city=? where id =?', [$name, $email, $gender, $dob, $age, $salary, $city, $id]);
         if ($rowAffected > 0) {
-            $response = [
-                'status' => '200',
-                'success' => true,
-                'message' => 'Record updated succesfully!'
-            ];
-            return $response;
+            return response()->json(array('status'=>'200','success'=>true,'message'=>'Record updated succesfully!'));
         } else {
-            $response = [
-                'status' => '400',
-                'success' => false,
-                'message' => 'Record updated failed!'
-            ];
-            return $response;
+            return response()->json(array('status'=>'400','success'=>false,'message'=>'Record updated failed!'));
         }
     }
     public function employeeDelete($id)
