@@ -34,19 +34,9 @@ class EmployeeController extends Controller
         $employee->city = $request->city;
         $saved = $employee->save();
         if ($saved) {
-            $response = [
-                'status' => '200',
-                'success' => true,
-                'message' => 'Record created successfully!'
-            ];
-            return $response;
+            return response()->json(array('status'=>'200','success'=>true,'message'=>'Record created succesfully!'));
         } else {
-            $response = [
-                'status' => '400',
-                'success' => false,
-                'message' => 'Record created failed!'
-            ];
-            return $response;
+            return response()->json(array('status'=>'400','success'=>false,'message'=>'Record create failed!'));
         }
     }
 
@@ -69,26 +59,16 @@ class EmployeeController extends Controller
         if ($rowAffected > 0) {
             return response()->json(array('status'=>'200','success'=>true,'message'=>'Record updated succesfully!'));
         } else {
-            return response()->json(array('status'=>'400','success'=>false,'message'=>'Record updated failed!'));
+            return response()->json(array('status'=>'400','success'=>false,'message'=>'Record update failed!'));
         }
     }
     public function employeeDelete($id)
     {
         $rowAffected = DB::delete('delete from employee where id =?', [$id]);
         if ($rowAffected > 0) {
-            $response = [
-                'status' => '200',
-                'success' => true,
-                'message' => 'Record deleted succesfully!'
-            ];
-            return $response;
+            return response()->json(array('status'=>'200','success'=>true,'message'=>'Record deleted succesfully!'));
         } else {
-            $response = [
-                'status' => '400',
-                'success' => false,
-                'message' => 'Record deleted failed!'
-            ];
-            return $response;
+            return response()->json(array('status'=>'400','success'=>false,'message'=>'Record delete failed!'));
         }
     }
 }
