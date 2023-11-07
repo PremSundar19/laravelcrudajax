@@ -230,15 +230,15 @@
                     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
                     if (!emailPattern.test(validateEmail)) {
                           $('#alreadyExists').text('');
-                          $("#emailError").text('* Please enter a valid email address.');
+                          $('#emailError').text('* Please enter a valid email address.');
                     } else {
-                        $("#emailError").text('');
+                        $('#emailError').text('');
                     }
         }
         function duplicateEmail(element){
            var email = $(element).val();
                 $.ajax({
-                    type: "get",
+                    type: 'get',
                     url: '{{url('checkEmail')}}',
                     data: {email:email},
                     dataType: "json",
@@ -268,7 +268,7 @@
         function employeeList() {
             $.ajax({
                 type: 'get',
-                url: "{{ url('employeeList') }}",
+                url: '{{ url('employeeList') }}',
                 success: function(response) {
                     $('#employee_data').empty();
                     var tr = '';
@@ -349,7 +349,7 @@
         function viewEmployee(id) {
             $.ajax({
                 type: 'get',
-                url: "{{ url('employeeFetch') }}/" + id,
+                url: '{{ url('employeeFetch') }}/' + id,
                 success: function(response) {
                     $('#id').val(response.id);
                     $('#editname').val(response.name);
@@ -391,10 +391,10 @@
             });
         }
         function deleteEmployee(){
-            var id = $("#delete_id").val();
+            var id = $('#delete_id').val();
             $('#deleteEmployeeModal').modal('hide');
             $.ajax({
-               url : "{{ url('employeDelete') }}/" + id,
+               url : '{{ url('employeDelete') }}/' + id,
                type : "get",
                success:function(response){
                     successMessage(response.message,response.status);
