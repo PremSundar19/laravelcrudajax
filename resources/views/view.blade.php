@@ -33,7 +33,7 @@
                             <h2>Employee <b>List</b></h2>
                         </div>
                         <div class="col-sm-6" id="addNewEmployee">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
                     Add New Employee
                 </button>
                         </div>
@@ -109,10 +109,10 @@
                             <span id="cityError" class="text-danger"></span>
                         </div>
                         <br>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary btn-xs py-1 saveFormClose"
+                        <div class="modal-footer"  style="height: 45px;">
+                            <button type="button" class="btn btn-secondary btn-xs py-0 saveFormClose"
                                 data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary btn-xs py-1" id="save" onclick="addEmployee();">Save</button>
+                            <button type="button" class="btn btn-primary btn-xs py-0" id="save" onclick="addEmployee();">Save</button>
                         </div>
                 </form>
                 </div>
@@ -168,10 +168,10 @@
                             <input type="text" name="editcity" id="editcity" class="form-control" oninput="validateText(this);">
                         </div>
                         <br>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary btn-xs py-1"
+                        <div class="modal-footer" style="height: 45px;">
+                            <button type="button" class="btn btn-secondary btn-xs py-0"
                                 data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary btn-xs py-1" onclick="updateEmployee()">Save</button>
+                            <button type="button" class="btn btn-primary btn-xs py-0" onclick="updateEmployee()">Save</button>
                         </div>
                     </form>
                 </div>
@@ -190,9 +190,9 @@
                     <p class="text-danger"><small>This action cannot be undone.</small></p>
                 </div>
                 <input type="hidden" id="delete_id">
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default close" data-bs-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-danger" onclick="deleteEmployee()" value="Delete">
+                <div class="modal-footer"  style="height: 60px;">
+                    <input type="button" class="btn btn-secondary close btn-xs py-0" data-bs-dismiss="modal" value="Cancel">
+                    <input type="submit" class="btn btn-danger btn-xs py-0" onclick="deleteEmployee()" value="Delete">
                 </div>
             </div>
         </div>
@@ -284,8 +284,8 @@
                             tr += '<td>'+ response[i].salary +'</td>' 
                             tr += '<td>'+ response[i].city +'</td>'; 
                             tr += '<td><div class="d-flex">';
-                            tr += '<a class="btn btn-success" data-bs-target="#editEmployeeModal" data-bs-toggle="modal" onclick=viewEmployee("' + response[i].id +'")>Edit</a> &nbsp;&nbsp;' ;
-                            tr += '<a class="btn btn-danger"  data-bs-target="#deleteEmployeeModal" data-bs-toggle="modal"  onclick=$("#delete_id").val("' +response[i].id+'")>Delete</a>';
+                            tr += '<a class="btn btn-success  btn-xs py-0" data-bs-target="#editEmployeeModal" data-bs-toggle="modal" onclick=viewEmployee("' + response[i].id +'")>Edit</a> &nbsp;&nbsp;' ;
+                            tr += '<a class="btn btn-danger  btn-xs py-0"  data-bs-target="#deleteEmployeeModal" data-bs-toggle="modal"  onclick=$("#delete_id").val("' +response[i].id+'")>Delete</a>';
                             tr += '</div></td>';
                             tr += '</tr>';
                         }
