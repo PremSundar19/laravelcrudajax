@@ -251,7 +251,7 @@
                 });
         }
         $('.saveFormClose').click(()=>{
-                    $('#nameError2').text('');
+                    $('#nameError2,#alreadyExists').text('');
                     $('#name,#email,#dob,#age,#salary,#city').val('');
                     $('input[type="radio"][name="gender"]').prop('checked', false);
         });
